@@ -3,7 +3,7 @@ NOVA is a Waveform API used to create waveforms modulating variable (with method
 custom patterns for your software.
 
 ## Requirements
-* C# 8.0
+* .NET 8.0
 
 ## Supported Waveforms
 To check for supported waveforms see NOVA.Implementations directory.
