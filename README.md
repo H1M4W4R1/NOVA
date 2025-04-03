@@ -34,8 +34,11 @@ In such case when `Duration` ends waveform will be automatically stopped.
 Setting `Duration` to any value below zero will result in infinite duration (looping).
 
 ```csharp
-testWaveform.Duration = 1_000; // Set waveform duration to 1 second
+testWaveform.SetDuration(1_000); // Set waveform duration to 1 second
 ```
+
+Warning: Some waveforms do not support modifications of duration and will throw exception unless silenced using
+second parameter.
 
 ## Running waveforms in sequence
 ```csharp

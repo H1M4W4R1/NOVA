@@ -1,4 +1,6 @@
-﻿namespace NOVA.Abstract
+﻿using NOVA.Abstract.Interfaces;
+
+namespace NOVA.Abstract
 {
     /// <summary>
     /// Base class for all waveforms
@@ -47,7 +49,7 @@
         /// <summary>
         /// Duration of the waveform in milliseconds, -1 if infinite
         /// </summary>
-        public virtual double Duration { get; set; } = -1;
+        public double Duration { get; protected set; } = -1;
 
         /// <summary>
         /// Checks whether the waveform is infinite (automatically loops)
@@ -65,6 +67,30 @@
         /// </remarks>
         public double DefaultValue { get; set; } = 0;
 
+        /// <summary>
+        /// Sets the duration of the waveform.
+        /// </summary>
+        /// <param name="milliseconds">Duration in milliseconds</param>
+        /// <param name="silentException">Exception will not be thrown if set to true, function will just return</param>
+        /// <exception cref="InvalidOperationException">Thrown if the waveform does not support dynamic duration</exception>
+        public void SetDuration(double milliseconds, bool silentException = false)
+        {
+            // Check if the waveform supports dynamic duration
+            if (this is IStaticDurationWaveform)
+            {
+                if(!silentException)
+                    throw new InvalidOperationException("This waveform does not support dynamic duration.");
+                
+                return;
+            }
+
+            // Ensure duration is not negative
+            if (milliseconds < 0) milliseconds = -1;
+
+            // Set duration
+            Duration = milliseconds;
+        }
+        
         /// <summary>
         /// Shifts the start time of the waveform by the given milliseconds.
         /// </summary>
