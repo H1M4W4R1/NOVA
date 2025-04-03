@@ -64,6 +64,22 @@
         /// Changeable to allow for dynamic default value changes during runtime to fit specific requirements.
         /// </remarks>
         public double DefaultValue { get; set; } = 0;
+
+        /// <summary>
+        /// Shifts the start time of the waveform by the given milliseconds.
+        /// </summary>
+        /// <param name="milliseconds">Milliseconds to shift the start time by</param>
+        public void ShiftTime(double milliseconds)
+        {
+            // Check if waveform is running
+            if (!IsRunning) return;
+            
+            // Shift the start time by the given milliseconds
+            StartTime = StartTime.AddMilliseconds(milliseconds);
+
+            // Update the last tick time, previous tick time and current value of the waveform
+            Update();
+        }
         
         /// <summary>
         /// Event raised when the waveform starts
