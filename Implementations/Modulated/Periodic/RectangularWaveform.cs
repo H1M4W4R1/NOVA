@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract;
 using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated.Periodic
@@ -19,6 +20,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         /// Sets the fill factor of the waveform
         /// </summary>
         /// <param name="fillFactor">Fill factor of the waveform in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetFillFactor(double fillFactor) => FillFactor = Math.Clamp(fillFactor, 0, 1);
 
         public override double CalculateValueAt(double time)

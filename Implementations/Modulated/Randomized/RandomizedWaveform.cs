@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract;
 using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated.Randomized
@@ -46,6 +47,7 @@ namespace NOVA.Implementations.Modulated.Randomized
         /// Sets the maximum amplitude of the waveform
         /// </summary>
         /// <param name="maxAmplitude">Maximum amplitude in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAmplitude(double maxAmplitude)
         {
             Amplitude = WaveformMath.ClampAmplitude(maxAmplitude);
@@ -56,10 +58,19 @@ namespace NOVA.Implementations.Modulated.Randomized
         /// Sets the update frequency of the waveform
         /// </summary>
         /// <param name="updateFrequency">Update frequency in Hz</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetUpdateFrequency(double updateFrequency)
         {
             UpdateFrequency = WaveformMath.ClampFrequency(updateFrequency);
         }
+        
+        /// <summary>
+        /// Sets the offset of the waveform
+        /// </summary>
+        /// <param name="offset">Offset of the waveform in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetOffset(double offset) => Offset = WaveformMath.ClampOffset(offset, Amplitude);
+        
 
         public override double CalculateValueAt(double time)
         {

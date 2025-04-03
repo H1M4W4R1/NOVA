@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract;
 using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated
@@ -18,6 +19,7 @@ namespace NOVA.Implementations.Modulated
         /// Sets the amplitude of the waveform
         /// </summary>
         /// <param name="amplitude">Amplitude of the waveform in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAmplitude(double amplitude) => Amplitude = WaveformMath.ClampAmplitude(amplitude);
 
         public override double CalculateValueAt(double time) => Amplitude;

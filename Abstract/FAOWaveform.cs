@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract.Interfaces;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract.Interfaces;
 using NOVA.Utility;
 
 namespace NOVA.Abstract
@@ -40,12 +41,14 @@ namespace NOVA.Abstract
         /// Sets the frequency of the waveform
         /// </summary>
         /// <param name="frequency">Frequency in Hz</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetFrequency(double frequency) => Frequency = WaveformMath.ClampFrequency(frequency);
 
         /// <summary>
         /// Sets the amplitude of the waveform
         /// </summary>
         /// <param name="amplitude">Amplitude in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAmplitude(double amplitude)
         {
             // Ensure amplitude and offset is in [0, 1] range
@@ -58,6 +61,7 @@ namespace NOVA.Abstract
         /// Sets the offset of the waveform
         /// </summary>
         /// <param name="offset">Offset in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetOffset(double offset) => Offset = WaveformMath.ClampOffset(offset, Amplitude);
 
     }

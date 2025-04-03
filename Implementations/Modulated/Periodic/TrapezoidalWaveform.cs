@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract;
 using NOVA.Abstract.Interfaces;
 using NOVA.Utility;
 
@@ -52,6 +53,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         /// Sets the frequency of the waveform
         /// </summary>
         /// <param name="amplitude">Amplitude in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAmplitude(double amplitude)
         {
             Amplitude = WaveformMath.ClampAmplitude(amplitude);
@@ -62,6 +64,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         /// Sets the offset of the waveform
         /// </summary>
         /// <param name="offset">Offset of the waveform in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetOffset(double offset) => Offset = WaveformMath.ClampOffset(offset, Amplitude);
 
         public override double CalculateValueAt(double time)

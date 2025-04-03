@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract;
 using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated.Periodic
@@ -28,6 +29,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         /// Inverts the waveform sawtooth direction
         /// </summary>
         /// <param name="inverted">True if the waveform should be inverted, false otherwise</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetInverted(bool inverted) => Inverted = inverted;
 
         public override double CalculateValueAt(double time)

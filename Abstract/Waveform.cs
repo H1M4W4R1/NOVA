@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract.Interfaces;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract.Interfaces;
 using NOVA.Utility;
 
 namespace NOVA.Abstract
@@ -74,6 +75,7 @@ namespace NOVA.Abstract
         /// <param name="milliseconds">Duration in milliseconds</param>
         /// <param name="silentException">Exception will not be thrown if set to true, function will just return</param>
         /// <exception cref="InvalidOperationException">Thrown if the waveform does not support dynamic duration</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetDuration(double milliseconds, bool silentException = false)
         {
             // Check if the waveform supports dynamic duration
@@ -93,6 +95,7 @@ namespace NOVA.Abstract
         /// Sets the default value of the waveform.
         /// </summary>
         /// <param name="value">Default value in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetDefaultValue(double value)
         {
             // Set default value

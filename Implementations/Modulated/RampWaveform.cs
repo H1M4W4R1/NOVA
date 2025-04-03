@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract;
 using NOVA.Abstract.Interfaces;
 using NOVA.Utility;
 
@@ -36,12 +37,14 @@ namespace NOVA.Implementations.Modulated
         /// Sets the start value of the waveform
         /// </summary>
         /// <param name="value">Start value of the waveform in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetStartValue(double value) => StartValue = WaveformMath.ClampAmplitude(value);
         
         /// <summary>
         /// Sets the end value of the waveform
         /// </summary>
         /// <param name="value">End value of the waveform in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetEndValue(double value) => EndValue = WaveformMath.ClampAmplitude(value);
         
         public override double CalculateValueAt(double time)

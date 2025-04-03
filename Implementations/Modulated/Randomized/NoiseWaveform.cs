@@ -1,4 +1,5 @@
-﻿using NOVA.Abstract;
+﻿using System.Runtime.CompilerServices;
+using NOVA.Abstract;
 using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated.Randomized
@@ -28,6 +29,7 @@ namespace NOVA.Implementations.Modulated.Randomized
         /// Sets the amplitude of the waveform
         /// </summary>
         /// <param name="amplitude">Amplitude in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAmplitude(double amplitude)
         {
             // Ensure amplitude and offset is in [0, 1] range
@@ -40,6 +42,7 @@ namespace NOVA.Implementations.Modulated.Randomized
         /// Sets the offset of the waveform
         /// </summary>
         /// <param name="offset">Offset in [0, 1] range</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetOffset(double offset) => Offset = WaveformMath.ClampOffset(offset, Amplitude);
         
         public override double CalculateValueAt(double time)
