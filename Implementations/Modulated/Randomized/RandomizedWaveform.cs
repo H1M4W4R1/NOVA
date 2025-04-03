@@ -1,6 +1,6 @@
 ﻿using NOVA.Abstract;
 
-namespace NOVA.Implementations.Modulated
+namespace NOVA.Implementations.Modulated.Randomized
 {
     /// <summary>
     /// Randomizes waveform - randomizes amplitude while keeping the offset constant
@@ -102,7 +102,7 @@ namespace NOVA.Implementations.Modulated
         /// <param name="updateFrequency">Update frequency in Hz</param>
         public void SetUpdateFrequency(double updateFrequency)
         {
-            UpdateFrequency = Math.Max(0.001, updateFrequency);
+            UpdateFrequency = Math.Max(WaveformAPI.MINIMUM_FREQUENCY, updateFrequency);
         }
 
 

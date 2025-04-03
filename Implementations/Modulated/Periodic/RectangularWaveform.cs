@@ -1,6 +1,6 @@
 ﻿using NOVA.Abstract;
 
-namespace NOVA.Implementations.Modulated
+namespace NOVA.Implementations.Modulated.Periodic
 {
     public sealed class RectangularWaveform(double frequency, double amplitude = 1, double offset = 0, double fillFactor = 0.5)
         : FAOWaveform(frequency, amplitude, offset)

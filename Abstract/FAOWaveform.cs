@@ -1,4 +1,6 @@
-﻿namespace NOVA.Abstract
+﻿using NOVA.Abstract.Interfaces;
+
+namespace NOVA.Abstract
 {
     /// <summary>
     /// Waveform with modulated frequency, amplitude and offset
@@ -10,14 +12,18 @@
     /// <remarks>
     /// If the sum of amplitude and offset is greater than 1, the offset is adjusted to ensure the sum is 1
     /// </remarks>
-    public abstract class FAOWaveform(double frequency, double amplitude, double offset) : Waveform
+    public abstract class FAOWaveform(double frequency, double amplitude, double offset) : Waveform,
+        IPeriodicWaveform
     {
-        private const double MIN_FREQUENCY = 0.001;
-
         /// <summary>
         /// Frequency of the waveform in Hz
         /// </summary>
-        protected double Frequency { get; private set; } = Math.Max(frequency, MIN_FREQUENCY);
+        public double Frequency { get; private set; } = Math.Max(frequency, WaveformAPI.MINIMUM_FREQUENCY);
+        
+        /// <summary>
+        /// Period of the waveform in milliseconds
+        /// </summary>
+        public double Period => 1000 / Frequency;
 
         /// <summary>
         /// Amplitude of the waveform in [0, 1] range
@@ -33,7 +39,7 @@
         /// Sets the frequency of the waveform
         /// </summary>
         /// <param name="frequency">Frequency in Hz</param>
-        public void SetFrequency(double frequency) => Frequency = Math.Max(frequency, MIN_FREQUENCY);
+        public void SetFrequency(double frequency) => Frequency = Math.Max(frequency, WaveformAPI.MINIMUM_FREQUENCY);
 
         /// <summary>
         /// Sets the amplitude of the waveform

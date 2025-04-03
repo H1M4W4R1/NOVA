@@ -9,6 +9,26 @@ namespace NOVA
     public static class WaveformAPI
     {
         /// <summary>
+        /// Minimum period of the waveform in milliseconds
+        /// </summary>
+        public const double MINIMUM_PERIOD = WAVEFORM_RESOLUTION * 2;
+
+        /// <summary>
+        /// Minimum usable period of the waveform in milliseconds
+        /// </summary>
+        public const double MINIMUM_USABLE_PERIOD = WAVEFORM_RESOLUTION * 10;
+        
+        /// <summary>
+        /// Minimum frequency of the waveform in Hz
+        /// </summary>
+        public const double MINIMUM_FREQUENCY = 1000 / MINIMUM_PERIOD;
+        
+        /// <summary>
+        /// Minimum usable frequency of the waveform in Hz
+        /// </summary>
+        public const double MINIMUM_USABLE_FREQUENCY = 1000 / MINIMUM_USABLE_PERIOD;
+        
+        /// <summary>
         /// Resolution of the waveform in milliseconds
         /// </summary>
         public const int WAVEFORM_RESOLUTION = 4;

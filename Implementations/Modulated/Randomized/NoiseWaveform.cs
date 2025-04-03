@@ -1,6 +1,6 @@
 ﻿using NOVA.Abstract;
 
-namespace NOVA.Implementations.Modulated
+namespace NOVA.Implementations.Modulated.Randomized
 {
     /// <summary>
     /// Simple noise waveform, changes value each millisecond (or tick of the WaveformAPI, whichever

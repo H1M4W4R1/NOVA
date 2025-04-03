@@ -1,11 +1,12 @@
 ﻿using NOVA.Abstract;
+using NOVA.Abstract.Interfaces;
 
 namespace NOVA.Implementations.Combined
 {
     /// <summary>
     /// Represents a sequential waveform - a waveform that is composed of multiple waveforms
     /// </summary>
-    public sealed class SequentialWaveform : Waveform
+    public sealed class SequentialWaveform : Waveform, IPeriodicWaveform
     {
         /// <summary>
         /// Waveforms that make up the sequential waveform
@@ -15,8 +16,10 @@ namespace NOVA.Implementations.Combined
         /// <summary>
         /// Duration of the waveform in milliseconds
         /// </summary>
-        private double Period { get; init; }
-        
+        public double Period { get; init; }
+
+        public double Frequency => 1000 / Period;
+
         public override double CalculateValueAt(double time)
         {
             // Calculate index of waveform with specified time

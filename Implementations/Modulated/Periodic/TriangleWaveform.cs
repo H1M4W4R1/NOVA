@@ -1,6 +1,6 @@
 ﻿using NOVA.Abstract;
 
-namespace NOVA.Implementations.Modulated
+namespace NOVA.Implementations.Modulated.Periodic
 {
     /// <summary>
     /// Triangle waveform
