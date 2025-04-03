@@ -28,10 +28,10 @@ testWaveform.Stop();
 ```
 
 ## Infinite and finite waveforms
-Some waveforms are setting `Duration` in constructor, however you can also do this manually.
+Some waveforms are setting `Duration` in constructor, however you can also do this manually using `SetDuration` method.
 In such case when `Duration` ends waveform will be automatically stopped.
 
-Setting `Duration` to any value below zero will result in infinite duration (looping).
+Using `SetDuration` to any value below zero will result in infinite duration (looping).
 
 ```csharp
 testWaveform.SetDuration(1_000); // Set waveform duration to 1 second
