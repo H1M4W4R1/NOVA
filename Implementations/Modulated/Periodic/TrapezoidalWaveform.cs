@@ -24,8 +24,8 @@ namespace NOVA.Implementations.Modulated.Periodic
         double keepMaxTime,
         double rampDownTime,
         double keepMinTime,
-        double amplitude = 1,
-        double offset = 0
+        double amplitude = WaveformMath.WAVEFORM_MAXIMUM_VALUE,
+        double offset = WaveformMath.WAVEFORM_MINIMUM_VALUE
     ) : Waveform, IPeriodicWaveform
     {
         /// <summary>
@@ -36,7 +36,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         /// <summary>
         /// Frequency of the waveform in Hz
         /// </summary>
-        public double Frequency => 1000 / Period;
+        public double Frequency => WaveformMath.PeriodToFrequency(Period);
 
         /// <summary>
         /// Amplitude of the waveform in [0, 1] range
@@ -67,7 +67,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         public override double CalculateValueAt(double time)
         {
             // Calculate time in period
-            double timeInPeriod = time % Period;
+            double timeInPeriod = WaveformMath.TimeInCycle(time, Period);
 
             // Calculate value based on time in period
             if (timeInPeriod < rampUpTime) // Ramp-up, triangle
@@ -75,7 +75,7 @@ namespace NOVA.Implementations.Modulated.Periodic
             if (timeInPeriod < rampUpTime + keepMaxTime) // Keep max, constant value
                 return Offset + Amplitude;
             if (timeInPeriod < rampUpTime + keepMaxTime + rampDownTime) // Ramp-down, inverted triangle
-                return Offset + Amplitude * (1 - (timeInPeriod - rampUpTime - keepMaxTime) / rampDownTime);
+                return Offset + Amplitude * (WaveformMath.WAVEFORM_MAXIMUM_VALUE - (timeInPeriod - rampUpTime - keepMaxTime) / rampDownTime);
             return Offset; // Keep min, constant value
         }
     }

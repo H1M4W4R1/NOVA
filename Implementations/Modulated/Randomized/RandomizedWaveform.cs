@@ -12,8 +12,8 @@ namespace NOVA.Implementations.Modulated.Randomized
     /// Offset cannot be higher than 1 - maxAmplitude, will be adjusted if necessary.
     /// </remarks>
     public sealed class RandomizedWaveform(double updateFrequency,
-        double amplitude = 1,
-        double offset = 0
+        double amplitude = WaveformMath.WAVEFORM_MAXIMUM_VALUE,
+        double offset = WaveformMath.WAVEFORM_MINIMUM_VALUE
     )
         : Waveform
     {
@@ -65,7 +65,7 @@ namespace NOVA.Implementations.Modulated.Randomized
         {
             // Check if enough time has passed since the last update
             UpdateTimer += DeltaTime;
-            if (UpdateTimer >= 1000 / UpdateFrequency)
+            if (UpdateTimer >= WaveformMath.FrequencyToPeriod(UpdateFrequency))
             {
                 // Reset timer
                 UpdateTimer = 0;
@@ -75,7 +75,8 @@ namespace NOVA.Implementations.Modulated.Randomized
             }
 
             // Return the current amplitude with the offset, ensuring the sum is within [0, 1] range
-            return Math.Clamp(CurrentAmplitude + Offset, 0, 1);
+            return Math.Clamp(CurrentAmplitude + Offset, WaveformMath.WAVEFORM_MINIMUM_VALUE,
+                WaveformMath.WAVEFORM_MAXIMUM_VALUE);
         }
     }
 }

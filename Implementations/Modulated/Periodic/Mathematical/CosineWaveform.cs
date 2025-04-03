@@ -1,4 +1,5 @@
 ﻿using NOVA.Abstract;
+using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated.Periodic.Mathematical
 {
@@ -8,10 +9,14 @@ namespace NOVA.Implementations.Modulated.Periodic.Mathematical
     /// <param name="frequency">Frequency of the waveform in Hz</param>
     /// <param name="amplitude">Amplitude of the waveform in [0, 1] range</param>
     /// <param name="offset">Offset of the waveform in [0, 1] range</param>
-    public sealed class CosineWaveform(double frequency, double amplitude = 1, double offset = 0)
+    public sealed class CosineWaveform(double frequency,
+        double amplitude = WaveformMath.WAVEFORM_MAXIMUM_VALUE,
+        double offset = WaveformMath.WAVEFORM_MINIMUM_VALUE
+    )
         : FAOWaveform(frequency, amplitude, offset)
     {
         public override double CalculateValueAt(double time)
-            => (Math.Cos(2 * Math.PI * Frequency * time / 1000) * Amplitude + Amplitude) / 2 + Offset;
+            => (Math.Cos(2 * Math.PI * Frequency * time / WaveformMath.ONE_SECOND) * Amplitude + Amplitude) / 2 +
+               Offset;
     }
 }

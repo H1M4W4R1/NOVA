@@ -50,7 +50,7 @@ namespace NOVA.Abstract
         /// <summary>
         /// Duration of the waveform in milliseconds, -1 if infinite
         /// </summary>
-        public double Duration { get; protected set; } = -1;
+        public double Duration { get; protected set; } = WaveformMath.LOOP_WAVEFORM;
 
         /// <summary>
         /// Checks whether the waveform is infinite (automatically loops)
@@ -85,11 +85,8 @@ namespace NOVA.Abstract
                 return;
             }
 
-            // Ensure duration is not negative
-            if (milliseconds < 0) milliseconds = -1;
-
-            // Set duration
-            Duration = milliseconds;
+            // Set duration to the given milliseconds or loop waveform if negative
+            Duration = milliseconds < 0 ? WaveformMath.LOOP_WAVEFORM : milliseconds;
         }
         
         /// <summary>

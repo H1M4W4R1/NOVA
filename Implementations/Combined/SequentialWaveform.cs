@@ -1,5 +1,6 @@
 ﻿using NOVA.Abstract;
 using NOVA.Abstract.Interfaces;
+using NOVA.Utility;
 
 namespace NOVA.Implementations.Combined
 {
@@ -18,7 +19,7 @@ namespace NOVA.Implementations.Combined
         /// </summary>
         public double Period { get; init; }
 
-        public double Frequency => 1000 / Period;
+        public double Frequency => WaveformMath.PeriodToFrequency(Period);
 
         public override double CalculateValueAt(double time)
         {
@@ -58,7 +59,7 @@ namespace NOVA.Implementations.Combined
                 Period += waveform.Duration;
 
             // Set looping mode
-            Duration = loopWaveform ? -1 : Period;
+            Duration = loopWaveform ? WaveformMath.LOOP_WAVEFORM : Period;
         }
     }
 }

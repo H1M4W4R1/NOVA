@@ -24,7 +24,7 @@ namespace NOVA.Abstract
         /// <summary>
         /// Period of the waveform in milliseconds
         /// </summary>
-        public double Period => 1000 / Frequency;
+        public double Period => WaveformMath.FrequencyToPeriod(Frequency);
 
         /// <summary>
         /// Amplitude of the waveform in [0, 1] range
