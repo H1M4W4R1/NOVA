@@ -1,5 +1,6 @@
 ﻿using NOVA.Abstract;
 using NOVA.Abstract.Interfaces;
+using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated.Periodic
 {
@@ -11,66 +12,58 @@ namespace NOVA.Implementations.Modulated.Periodic
     /// </ul>
     /// </summary>
     /// <param name="rampUpTime">Time in ms to ramp up from minimum to maximum value</param>
-    /// <param name="keepMaxTime">>Time in ms to keep maximum value</param>
-    /// <param name="rampDownTime">>Time in ms to ramp down from maximum to minimum value</param>
-    /// <param name="keepMinTime">>Time in ms to keep minimum value</param>
-    /// <param name="amplitude">>Amplitude of the waveform in [0, 1] range</param>
-    /// <param name="offset">>Offset of the waveform in [0, 1] range</param>
+    /// <param name="keepMaxTime">Time in ms to keep maximum value</param>
+    /// <param name="rampDownTime">Time in ms to ramp down from maximum to minimum value</param>
+    /// <param name="keepMinTime">Time in ms to keep minimum value</param>
+    /// <param name="amplitude">Amplitude of the waveform in [0, 1] range</param>
+    /// <param name="offset">Offset of the waveform in [0, 1] range</param>
     /// <remarks>
     /// The sum of amplitude and offset must be less than or equal to 1. 
     /// </remarks>
-    public sealed class TrapezoidalWaveform(double rampUpTime, double keepMaxTime, double rampDownTime, double keepMinTime, 
-        double amplitude = 1, double offset = 0) : Waveform, IPeriodicWaveform
+    public sealed class TrapezoidalWaveform(double rampUpTime,
+        double keepMaxTime,
+        double rampDownTime,
+        double keepMinTime,
+        double amplitude = 1,
+        double offset = 0
+    ) : Waveform, IPeriodicWaveform
     {
         /// <summary>
         /// Period of the waveform in ms
         /// </summary>
         public double Period => rampUpTime + keepMaxTime + rampDownTime + keepMinTime;
-        
+
         /// <summary>
         /// Frequency of the waveform in Hz
         /// </summary>
         public double Frequency => 1000 / Period;
-        
+
         /// <summary>
         /// Amplitude of the waveform in [0, 1] range
         /// </summary>
-        public double Amplitude { get; private set; } = Math.Clamp(amplitude, 0, 1);
-        
+        public double Amplitude { get; private set; } = WaveformMath.ClampAmplitude(amplitude);
+
         /// <summary>
         /// Offset of the waveform in [0, 1] range
         /// </summary>
-        public double Offset { get; private set; } = Math.Min(Math.Clamp(offset, 0, 1), 1 - Math.Clamp(amplitude, 0, 1));
-        
+        public double Offset { get; private set; } = WaveformMath.ClampOffset(offset, amplitude);
+
         /// <summary>
         /// Sets the frequency of the waveform
         /// </summary>
         /// <param name="amplitude">Amplitude in [0, 1] range</param>
         public void SetAmplitude(double amplitude)
         {
-            // Ensure amplitude is in [0, 1] range
-            amplitude = Math.Clamp(amplitude, 0, 1);
-
-            // Ensure amplitude + offset is in [0, 1] range
-            if (amplitude + Offset > 1) Offset = 1 - amplitude;
-
-            // Set amplitude
-            Amplitude = amplitude;
+            Amplitude = WaveformMath.ClampAmplitude(amplitude);
+            Offset = WaveformMath.ClampOffset(Offset, Amplitude);
         }
-        
+
         /// <summary>
         /// Sets the offset of the waveform
         /// </summary>
-        /// <param name="offset">>Offset of the waveform in [0, 1] range</param>
-        public void SetOffset(double offset)
-        {
-            // Ensure offset is in [0, 1] range
-            offset = Math.Min(Math.Clamp(offset, 0, 1), 1 - Math.Clamp(Amplitude, 0, 1));
+        /// <param name="offset">Offset of the waveform in [0, 1] range</param>
+        public void SetOffset(double offset) => Offset = WaveformMath.ClampOffset(offset, Amplitude);
 
-            // Set offset
-            Offset = offset;
-        }
-        
         public override double CalculateValueAt(double time)
         {
             // Calculate time in period

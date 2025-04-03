@@ -1,4 +1,5 @@
 ﻿using NOVA.Abstract;
+using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated
 {
@@ -11,13 +12,13 @@ namespace NOVA.Implementations.Modulated
         /// <summary>
         /// Amplitude of the waveform
         /// </summary>
-        private double Amplitude { get; set; } = Math.Clamp(startAmplitude, 0, 1);
+        private double Amplitude { get; set; } = WaveformMath.ClampAmplitude(startAmplitude);
         
         /// <summary>
         /// Sets the amplitude of the waveform
         /// </summary>
         /// <param name="amplitude">Amplitude of the waveform in [0, 1] range</param>
-        public void SetAmplitude(double amplitude) => Amplitude = Math.Clamp(amplitude, 0, 1);
+        public void SetAmplitude(double amplitude) => Amplitude = WaveformMath.ClampAmplitude(amplitude);
 
         public override double CalculateValueAt(double time) => Amplitude;
     }

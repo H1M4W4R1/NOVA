@@ -1,5 +1,6 @@
 ﻿using NOVA.Abstract;
 using NOVA.Abstract.Interfaces;
+using NOVA.Utility;
 
 namespace NOVA.Implementations.Modulated
 {
@@ -16,8 +17,8 @@ namespace NOVA.Implementations.Modulated
         /// <param name="duration">Duration of the waveform in ms</param>
         public RampWaveform(double from, double to, double duration)
         {
-            StartValue = Math.Clamp(from, 0, 1);
-            EndValue = Math.Clamp(to, 0, 1);
+            StartValue = WaveformMath.ClampAmplitude(from);
+            EndValue = WaveformMath.ClampAmplitude(to);
             Duration = duration;
         }
 
@@ -35,13 +36,13 @@ namespace NOVA.Implementations.Modulated
         /// Sets the start value of the waveform
         /// </summary>
         /// <param name="value">Start value of the waveform in [0, 1] range</param>
-        public void SetStartValue(double value) => StartValue = Math.Clamp(value, 0, 1);
+        public void SetStartValue(double value) => StartValue = WaveformMath.ClampAmplitude(value);
         
         /// <summary>
         /// Sets the end value of the waveform
         /// </summary>
         /// <param name="value">End value of the waveform in [0, 1] range</param>
-        public void SetEndValue(double value) => EndValue = Math.Clamp(value, 0, 1);
+        public void SetEndValue(double value) => EndValue = WaveformMath.ClampAmplitude(value);
         
         public override double CalculateValueAt(double time)
             => StartValue + (EndValue - StartValue) * Math.Clamp(time / Duration, 0, 1); // We clamp duration to [0, 1] range to prevent the value from going below 0 or above 1

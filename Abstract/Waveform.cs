@@ -1,4 +1,5 @@
 ﻿using NOVA.Abstract.Interfaces;
+using NOVA.Utility;
 
 namespace NOVA.Abstract
 {
@@ -98,7 +99,7 @@ namespace NOVA.Abstract
         public void SetDefaultValue(double value)
         {
             // Set default value
-            DefaultValue = Math.Clamp(value, 0, 1);
+            DefaultValue = WaveformMath.ClampAmplitude(value);
         }
         
         /// <summary>

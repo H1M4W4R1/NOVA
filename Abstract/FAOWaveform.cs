@@ -1,4 +1,5 @@
 ﻿using NOVA.Abstract.Interfaces;
+using NOVA.Utility;
 
 namespace NOVA.Abstract
 {
@@ -18,7 +19,7 @@ namespace NOVA.Abstract
         /// <summary>
         /// Frequency of the waveform in Hz
         /// </summary>
-        public double Frequency { get; private set; } = Math.Max(frequency, WaveformAPI.MINIMUM_FREQUENCY);
+        public double Frequency { get; private set; } = WaveformMath.ClampFrequency(frequency);
         
         /// <summary>
         /// Period of the waveform in milliseconds
@@ -28,52 +29,36 @@ namespace NOVA.Abstract
         /// <summary>
         /// Amplitude of the waveform in [0, 1] range
         /// </summary>
-        protected double Amplitude { get; private set; } = Math.Clamp(amplitude, 0, 1);
+        protected double Amplitude { get; private set; } = WaveformMath.ClampAmplitude(amplitude);
 
         /// <summary>
         /// Offset of the waveform in [0, 1] range
         /// </summary>
-        protected double Offset { get; private set; } = Math.Min(Math.Clamp(offset, 0, 1), 1 - Math.Clamp(amplitude, 0, 1));
+        protected double Offset { get; private set; } = WaveformMath.ClampOffset(offset, amplitude);
 
         /// <summary>
         /// Sets the frequency of the waveform
         /// </summary>
         /// <param name="frequency">Frequency in Hz</param>
-        public void SetFrequency(double frequency) => Frequency = Math.Max(frequency, WaveformAPI.MINIMUM_FREQUENCY);
+        public void SetFrequency(double frequency) => Frequency = WaveformMath.ClampFrequency(frequency);
 
         /// <summary>
         /// Sets the amplitude of the waveform
         /// </summary>
         /// <param name="amplitude">Amplitude in [0, 1] range</param>
-        /// <remarks>
-        /// If the sum of amplitude and offset is greater than 1, the offset is adjusted to ensure the sum is 1
-        /// </remarks>
         public void SetAmplitude(double amplitude)
         {
-            // Ensure amplitude is in [0, 1] range
-            amplitude = Math.Clamp(amplitude, 0, 1);
-
-            // Ensure amplitude + offset is in [0, 1] range
-            if (amplitude + Offset > 1) Offset = 1 - amplitude;
-
-            // Set amplitude
-            Amplitude = amplitude;
+            // Ensure amplitude and offset is in [0, 1] range
+            // and their sum is less or equal to 1
+            Amplitude = WaveformMath.ClampAmplitude(amplitude);
+            Offset = WaveformMath.ClampOffset(Offset, Amplitude);
         }
-
+        
         /// <summary>
         /// Sets the offset of the waveform
         /// </summary>
         /// <param name="offset">Offset in [0, 1] range</param>
-        /// <remarks>
-        /// If the sum of amplitude and offset is greater than 1, the amplitude is adjusted to ensure the sum is 1
-        /// </remarks>
-        public void SetOffset(double offset)
-        {
-            // Ensure offset is in [0, 1] range
-            offset = Math.Min(Math.Clamp(offset, 0, 1), 1 - Math.Clamp(Amplitude, 0, 1));
-            
-            // Set offset
-            Offset = offset;
-        }
+        public void SetOffset(double offset) => Offset = WaveformMath.ClampOffset(offset, Amplitude);
+
     }
 }
