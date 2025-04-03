@@ -57,7 +57,7 @@ namespace NOVA.Utility
         /// <returns>Clamped offset in [0, 1] range</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double ClampOffset(double offset, double amplitude = WAVEFORM_MINIMUM_VALUE) =>
-            Math.Min(Math.Clamp(offset, WAVEFORM_MINIMUM_VALUE, WAVEFORM_MINIMUM_VALUE),
+            Math.Min(Math.Clamp(offset, WAVEFORM_MINIMUM_VALUE, WAVEFORM_MAXIMUM_VALUE),
                 WAVEFORM_MAXIMUM_VALUE - Math.Clamp(amplitude, WAVEFORM_MINIMUM_VALUE, WAVEFORM_MAXIMUM_VALUE));
 
         /// <summary>
