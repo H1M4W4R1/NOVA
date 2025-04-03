@@ -65,7 +65,7 @@ namespace NOVA.Abstract
         /// <remarks>
         /// Changeable to allow for dynamic default value changes during runtime to fit specific requirements.
         /// </remarks>
-        public double DefaultValue { get; set; } = 0;
+        public double DefaultValue { get; protected set; }
 
         /// <summary>
         /// Sets the duration of the waveform.
@@ -89,6 +89,16 @@ namespace NOVA.Abstract
 
             // Set duration
             Duration = milliseconds;
+        }
+        
+        /// <summary>
+        /// Sets the default value of the waveform.
+        /// </summary>
+        /// <param name="value">Default value in [0, 1] range</param>
+        public void SetDefaultValue(double value)
+        {
+            // Set default value
+            DefaultValue = Math.Clamp(value, 0, 1);
         }
         
         /// <summary>
