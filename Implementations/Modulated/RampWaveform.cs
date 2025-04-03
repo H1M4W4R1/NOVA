@@ -5,7 +5,7 @@ namespace NOVA.Implementations.Modulated
     /// <summary>
     /// Waveform that ramps up from one value to another over a specified duration
     /// </summary>
-    public sealed class RampWaveform : WaveformBase
+    public sealed class RampWaveform : Waveform
     {
         /// <summary>
         /// Waveform that ramps up from one value to another over a specified duration

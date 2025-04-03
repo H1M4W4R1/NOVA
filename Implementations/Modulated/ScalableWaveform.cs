@@ -6,7 +6,7 @@ namespace NOVA.Implementations.Modulated
     /// Waveform with modulated amplitude - user can specify the amplitude of the waveform
     /// </summary>
     /// <param name="startAmplitude">Initial amplitude of the waveform in [0, 1] range</param>
-    public sealed class ScalableWaveform(double startAmplitude) : WaveformBase
+    public sealed class ScalableWaveform(double startAmplitude) : Waveform
     {
         /// <summary>
         /// Amplitude of the waveform

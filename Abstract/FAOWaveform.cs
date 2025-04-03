@@ -10,7 +10,7 @@
     /// <remarks>
     /// If the sum of amplitude and offset is greater than 1, the offset is adjusted to ensure the sum is 1
     /// </remarks>
-    public abstract class FAOWaveform(double frequency, double amplitude, double offset) : WaveformBase
+    public abstract class FAOWaveform(double frequency, double amplitude, double offset) : Waveform
     {
         private const double MIN_FREQUENCY = 0.001;
 
@@ -64,11 +64,8 @@
         public void SetOffset(double offset)
         {
             // Ensure offset is in [0, 1] range
-            offset = Math.Clamp(offset, 0, 1);
-
-            // Ensure amplitude + offset is in [0, 1] range
-            if (Amplitude + offset > 1) Amplitude = 1 - offset;
-
+            offset = Math.Min(Math.Clamp(offset, 0, 1), 1 - Math.Clamp(Amplitude, 0, 1));
+            
             // Set offset
             Offset = offset;
         }

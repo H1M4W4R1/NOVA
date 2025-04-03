@@ -16,13 +16,13 @@ namespace NOVA
         /// <summary>
         /// List of all created waveforms, automatically managed by the API
         /// </summary>
-        private static readonly List<WaveformBase> _waveforms = [];
+        private static readonly List<Waveform> _waveforms = [];
         
         /// <summary>
         /// Registers the waveform in the API
         /// </summary>
         /// <param name="waveform">Waveform to register</param>
-        internal static void RegisterWaveform(WaveformBase waveform)
+        internal static void RegisterWaveform(Waveform waveform)
         {
             _waveforms.Add(waveform);
         }
@@ -31,7 +31,7 @@ namespace NOVA
         /// Unregisters the waveform from the API
         /// </summary>
         /// <param name="waveform">Waveform to unregister</param>
-        internal static void UnregisterWaveform(WaveformBase waveform)
+        internal static void UnregisterWaveform(Waveform waveform)
         {
             _waveforms.Remove(waveform);
         }
@@ -68,7 +68,7 @@ namespace NOVA
         {
             // Update all waveforms, waveform should check if they need to update
             // As we're using .NET8 we don't need to care for Linq performance issues that much
-            foreach (WaveformBase waveform in _waveforms)
+            foreach (Waveform waveform in _waveforms)
             {
                 waveform.Update();
             }

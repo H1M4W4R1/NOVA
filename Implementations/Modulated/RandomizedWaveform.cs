@@ -22,14 +22,15 @@ namespace NOVA.Implementations.Modulated
         double maxAmplitude = 1,
         double offset = 0
     )
-        : WaveformBase
+        : Waveform
     {
         private Random RandomNumberGenerator { get; } = new();
 
         /// <summary>
         /// Current offset of the waveform in [0, 1] range
         /// </summary>
-        private double Offset { get; set; } = Math.Min(Math.Clamp(offset, 0, 1), 1 - Math.Clamp(maxAmplitude, 0, 1));
+        private double Offset { get; set; } = Math.Min(Math.Clamp(offset, 0, 1),
+            1 - Math.Clamp(Math.Max(minAmplitude, maxAmplitude), 0, 1));
 
         /// <summary>
         /// Current amplitude of the waveform in [0, 1] range
@@ -44,17 +45,17 @@ namespace NOVA.Implementations.Modulated
         /// <summary>
         /// Update frequency of the waveform in Hz
         /// </summary>
-        private double UpdateFrequency { get; set; } = Math.Max(0.001, updateFrequency);
+        public double UpdateFrequency { get; private set; } = Math.Max(0.001, updateFrequency);
 
         /// <summary>
         /// Minimum amplitude of the waveform in [0, 1] range
         /// </summary>
-        private double MinAmplitude { get; set; } = Math.Clamp(minAmplitude, 0, maxAmplitude);
+        public double MinAmplitude { get; private set; } = Math.Clamp(minAmplitude, 0, maxAmplitude);
 
         /// <summary>
         /// Maximum amplitude of the waveform in [0, 1] range
         /// </summary>
-        private double MaxAmplitude { get; set; } = Math.Clamp(maxAmplitude, minAmplitude, 1);
+        public double MaxAmplitude { get; private set; } = Math.Clamp(maxAmplitude, minAmplitude, 1);
 
         /// <summary>
         /// Sets the amplitude range of the waveform

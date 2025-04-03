@@ -5,12 +5,12 @@ namespace NOVA.Implementations.Combined
     /// <summary>
     /// Represents a sequential waveform - a waveform that is composed of multiple waveforms
     /// </summary>
-    public sealed class SequentialWaveform : WaveformBase
+    public sealed class SequentialWaveform : Waveform
     {
         /// <summary>
         /// Waveforms that make up the sequential waveform
         /// </summary>
-        private readonly WaveformBase[] _waveforms;
+        private readonly Waveform[] _waveforms;
         
         /// <summary>
         /// Duration of the waveform in milliseconds
@@ -39,7 +39,7 @@ namespace NOVA.Implementations.Combined
             return _waveforms[index].CalculateValueAt(timeLeft);
         }
         
-        public SequentialWaveform(bool loopWaveform = false, params WaveformBase[] waveforms)
+        public SequentialWaveform(bool loopWaveform = false, params Waveform[] waveforms)
         {
             _waveforms = waveforms;
             
@@ -51,7 +51,7 @@ namespace NOVA.Implementations.Combined
             
             // Set duration to sum of all waveforms durations
             Duration = 0;
-            foreach (WaveformBase waveform in waveforms)
+            foreach (Waveform waveform in waveforms)
                 Period += waveform.Duration;
 
             // Set looping mode
