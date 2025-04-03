@@ -3,7 +3,8 @@
 namespace NOVA.Implementations.Modulated
 {
     /// <summary>
-    /// Simple noise waveform, changes value each millisecond
+    /// Simple noise waveform, changes value each millisecond (or tick of the WaveformAPI, whichever
+    /// takes longer; usually the tick of the WaveformAPI)
     /// </summary>
     /// <param name="amplitude">Amplitude of the waveform in [0, 1] range</param>
     /// <param name="offset">>Offset of the waveform in [0, 1] range</param>
