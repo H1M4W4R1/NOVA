@@ -133,7 +133,7 @@ namespace NOVA.Utility
         /// <summary>
         /// Converts period to frequency in Hz.
         /// </summary>
-        /// <param name="period">>Period of the waveform in milliseconds</param>
+        /// <param name="period">Period of the waveform in milliseconds</param>
         /// <returns>Frequency of the waveform in Hz</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static double PeriodToFrequency(double period)
         {
