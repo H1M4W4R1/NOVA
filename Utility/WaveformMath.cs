@@ -110,10 +110,10 @@ namespace NOVA.Utility
         }
 
         /// <summary>
-        /// Ensures the frequency of the waveform is greater than or equal to the minimum frequency.
+        /// Ensures the frequency of the waveform is less than or equal to the maximum frequency.
         /// </summary>
-        /// <param name="frequency">Frequency of the waveform that should be greater than or equal to the minimum frequency</param>
-        /// <returns>Clamped frequency that is greater than or equal to the minimum frequency</returns>
+        /// <param name="frequency">Frequency of the waveform in Hz</param>
+        /// <returns>Clamped frequency in [0, MAXIMUM_FREQUENCY] range</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static double ClampFrequency(double frequency) =>
             Math.Min(frequency, MAXIMUM_FREQUENCY);
 
