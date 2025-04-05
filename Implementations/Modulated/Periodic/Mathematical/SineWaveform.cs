@@ -16,6 +16,6 @@ namespace NOVA.Implementations.Modulated.Periodic.Mathematical
         : FAOWaveform(frequency, amplitude, offset)
     {
         public override double CalculateValueAt(double time)
-            => (Math.Sin(2 * Math.PI * Frequency * time / WaveformMath.ONE_SECOND) * Amplitude + Amplitude) / 2 + Offset;
+            => (Math.Sin(-Math.PI/2 + 2 * Math.PI * Frequency * time / 1000) * Amplitude + Amplitude) / 2 + Offset;
     }
 }

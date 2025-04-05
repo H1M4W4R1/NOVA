@@ -35,20 +35,20 @@ namespace NOVA.Utility
         public const double MINIMUM_USABLE_PERIOD = WAVEFORM_RESOLUTION * 10;
 
         /// <summary>
-        /// Minimum frequency of the waveform in Hz
+        /// Maximum frequency of the waveform in Hz
         /// </summary>
-        public const double MINIMUM_FREQUENCY = ONE_SECOND / MINIMUM_PERIOD;
+        public const double MAXIMUM_FREQUENCY = ONE_SECOND / MINIMUM_PERIOD;
 
         /// <summary>
-        /// Minimum usable frequency of the waveform in Hz
+        /// Maximum usable frequency of the waveform in Hz
         /// </summary>
-        public const double MINIMUM_USABLE_FREQUENCY = ONE_SECOND / MINIMUM_USABLE_PERIOD;
+        public const double MAXIMUM_USABLE_FREQUENCY = ONE_SECOND / MINIMUM_USABLE_PERIOD;
 
         /// <summary>
         /// Constant value used to indicate that the waveform should loop.
         /// </summary>
         public const int LOOP_WAVEFORM = -1;
-        
+
         /// <summary>
         /// Clamps the offset of the waveform to ensure it is in [0, 1] range and does not exceed 1 - amplitude.
         /// </summary>
@@ -90,8 +90,7 @@ namespace NOVA.Utility
         /// <param name="maxAmplitude">Maximum amplitude of the waveform that should be in [0, 1] range</param>
         /// <param name="useSafeClamping">If true, the min amplitude is clamped to max amplitude rather than swapped</param>
         /// <returns>Tuple of clamped min and max amplitude in [0, 1] range</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static (double, double) ClampAmplitudeRange(
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static (double, double) ClampAmplitudeRange(
             double minAmplitude,
             double maxAmplitude,
             bool useSafeClamping = true)
@@ -104,8 +103,7 @@ namespace NOVA.Utility
             // clamp min to max if useSafeClamping is true
             if (useSafeClamping)
                 minAmplitude = Math.Min(minAmplitude, maxAmplitude);
-            else if (minAmplitude > maxAmplitude) 
-                (minAmplitude, maxAmplitude) = (maxAmplitude, minAmplitude);
+            else if (minAmplitude > maxAmplitude) (minAmplitude, maxAmplitude) = (maxAmplitude, minAmplitude);
 
             // Return clamped min and max amplitude
             return (minAmplitude, maxAmplitude);
@@ -117,7 +115,7 @@ namespace NOVA.Utility
         /// <param name="frequency">Frequency of the waveform that should be greater than or equal to the minimum frequency</param>
         /// <returns>Clamped frequency that is greater than or equal to the minimum frequency</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static double ClampFrequency(double frequency) =>
-            Math.Max(frequency, MINIMUM_FREQUENCY);
+            Math.Min(frequency, MAXIMUM_FREQUENCY);
 
         /// <summary>
         /// Converts frequency to period in milliseconds.
@@ -156,9 +154,9 @@ namespace NOVA.Utility
             // Safety checks
             if (period <= 0) return period;
             if (currentTime <= 0) return 0;
-    
+
             // Calculate the time in the cycle
-           return currentTime % period;
+            return currentTime % period;
         }
     }
 }

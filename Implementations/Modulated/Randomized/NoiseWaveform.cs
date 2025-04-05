@@ -48,7 +48,7 @@ namespace NOVA.Implementations.Modulated.Randomized
         public override double CalculateValueAt(double time)
         {
             // Check if time has changed by one millisecond, regenerate value if it has
-            if (Math.Abs(time - _lastCalculatedTime) > WaveformMath.MINIMUM_FREQUENCY)
+            if (Math.Abs(time - _lastCalculatedTime) > WaveformMath.MINIMUM_USABLE_PERIOD)
             {
                 // Generate a new random value
                 _lastCalculatedValue = Random.Shared.NextDouble() * Amplitude + Offset;
