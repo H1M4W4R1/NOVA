@@ -134,15 +134,40 @@ namespace NOVA.Abstract
         public WaveformEndHandler? OnWaveformEnd = delegate { };
 
         /// <summary>
+        /// Starts the waveform with the current UTC time
+        /// </summary>
+        public void Start() => Start(null);
+
+        /// <summary>
+        /// Starts the waveform with the given UTC time
+        /// </summary>
+        /// <param name="waveform">Waveform to synchronize with</param>
+        /// <param name="shiftMilliseconds">Milliseconds to shift the start time by</param>
+        public void StartSynchronizedWith(Waveform waveform, double shiftMilliseconds = 0)
+        {
+            // Check if the waveform is running
+            if (!waveform.IsRunning) return;
+
+            // Get the start time of the given waveform
+            DateTime startTime = waveform.StartTime;
+            
+            // Shift the start time by the given milliseconds
+            startTime = startTime.AddMilliseconds(shiftMilliseconds);
+            
+            // Start the waveform with the shifted start time
+            Start(startTime);
+        }
+        
+        /// <summary>
         /// Starts the waveform
         /// </summary>
-        public void Start()
+        private void Start(DateTime? startTime)
         {
             // Ensure the waveform is not already running
             if (IsRunning) return;
 
             // Update times and set the running flag
-            StartTime = DateTime.UtcNow;
+            StartTime = startTime ?? DateTime.UtcNow;
             LastTickTime = StartTime;
             IsRunning = true;
 
