@@ -14,7 +14,7 @@ namespace NOVA.Implementations
     /// <remarks>
     /// Key characteristics:
     /// <list type="bullet">
-    ///   <item>Infinite duration (automatically inherits <see cref="Waveform.LOOP_WAVEFORM"/> behavior)</item>
+    ///   <item>Infinite duration (automatically inherits looping behavior)</item>
     ///   <item>Time-independent output value</item>
     ///   <item>Sealed to prevent further inheritance</item>
     /// </list>
