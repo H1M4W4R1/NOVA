@@ -5,224 +5,210 @@ using NOVA.Utility;
 namespace NOVA.Abstract
 {
     /// <summary>
-    /// Base class for all waveforms
+    /// Abstract base class that defines the core functionality for all waveform implementations.
+    /// Provides timing control, state management, and event handling for waveform generation.
     /// </summary>
     public abstract class Waveform
     {
         /// <summary>
-        /// Time when the waveform started
+        /// Gets the UTC timestamp when the waveform was started. Protected for derived class access.
         /// </summary>
         protected DateTime StartTime { get; private set; }
 
         /// <summary>
-        /// Tick before the last tick
+        /// Gets the UTC timestamp of the previous update tick. Protected for derived class access.
         /// </summary>
         protected DateTime PreviousTickTime { get; private set; }
 
         /// <summary>
-        /// Time when last update was received
+        /// Gets the UTC timestamp of the most recent update tick. Protected for derived class access.
         /// </summary>
         protected DateTime LastTickTime { get; private set; }
 
         /// <summary>
-        /// Indicates whether the waveform is running, if false
-        /// then the waveform is stopped
+        /// Indicates whether the waveform is currently active and generating values.
+        /// False indicates the waveform is stopped and not updating.
         /// </summary>
         public bool IsRunning { get; private set; }
 
         /// <summary>
-        /// Time since the waveform started
+        /// Gets the elapsed time in milliseconds since the waveform started.
+        /// Calculated as the difference between current time and start time.
         /// </summary>
         public double TimeSinceStart => (LastTickTime - StartTime).TotalMilliseconds;
 
         /// <summary>
-        /// Total time of the last update in milliseconds
+        /// Gets the time delta in milliseconds between the last two updates.
+        /// Useful for frame-rate independent calculations.
         /// </summary>
         public double DeltaTime => (LastTickTime - PreviousTickTime).TotalMilliseconds;
         
         /// <summary>
-        /// Calculates the value of the waveform at the given time.
-        /// <i>Must support looping.</i>
+        /// Abstract method that derived classes must implement to calculate the waveform's value at a specific time.
         /// </summary>
-        /// <param name="time">Time in milliseconds</param>
-        /// <returns>Value of the waveform at the given time</returns>
+        /// <param name="time">The time in milliseconds since waveform start</param>
+        /// <returns>The calculated waveform value at the specified time</returns>
+        /// <remarks>
+        /// Implementations must support looping behavior when the waveform duration is exceeded.
+        /// </remarks>
         public abstract double CalculateValueAt(double time);
 
         /// <summary>
-        /// Duration of the waveform in milliseconds, -1 if infinite
+        /// Gets or sets the total duration of the waveform in milliseconds.
+        /// A value less than 0 indicates an infinite/looping waveform.
+        /// Protected setter allows modification by derived classes.
         /// </summary>
         public double Duration { get; protected set; } = WaveformMath.LOOP_WAVEFORM;
 
         /// <summary>
-        /// Checks whether the waveform is infinite (automatically loops)
+        /// Determines whether the waveform is infinite (continuously loops).
         /// </summary>
-        /// <remarks>
-        /// Waveform is always infinite if duration is less than zero.
-        /// </remarks>
+        /// <value>
+        /// True if Duration is negative (infinite), false for finite durations.
+        /// </value>
         public bool IsInfinite => Duration < 0;
 
         /// <summary>
-        /// Default value of the waveform. Set when waveform starts or stops.
+        /// Gets or sets the default output value used when the waveform starts or stops.
+        /// Protected setter allows modification by derived classes.
         /// </summary>
         /// <remarks>
-        /// Changeable to allow for dynamic default value changes during runtime to fit specific requirements.
+        /// The value is automatically clamped to the range [0, 1]. Can be changed
+        /// dynamically during runtime to meet specific application requirements.
         /// </remarks>
         public double DefaultValue { get; protected set; }
 
         /// <summary>
-        /// Sets the duration of the waveform.
+        /// Updates the waveform's duration if supported by the implementation.
         /// </summary>
-        /// <param name="milliseconds">Duration in milliseconds</param>
-        /// <param name="silentException">Exception will not be thrown if set to true, function will just return</param>
-        /// <exception cref="InvalidOperationException">Thrown if the waveform does not support dynamic duration</exception>
+        /// <param name="milliseconds">New duration in milliseconds. Negative values indicate infinite duration.</param>
+        /// <param name="silentException">When true, suppresses exceptions for unsupported operations</param>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if the waveform implements IStaticDurationWaveform and silentException is false
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetDuration(double milliseconds, bool silentException = false)
         {
-            // Check if the waveform supports dynamic duration
             if (this is IStaticDurationWaveform)
             {
                 if(!silentException)
                     throw new InvalidOperationException("This waveform does not support dynamic duration.");
-                
                 return;
             }
 
-            // Set duration to the given milliseconds or loop waveform if negative
             Duration = milliseconds < 0 ? WaveformMath.LOOP_WAVEFORM : milliseconds;
         }
         
         /// <summary>
-        /// Sets the default value of the waveform.
+        /// Sets the default output value for the waveform, clamped to valid range.
         /// </summary>
-        /// <param name="value">Default value in [0, 1] range</param>
+        /// <param name="value">New default value in range [0, 1]</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetDefaultValue(double value)
         {
-            // Set default value
             DefaultValue = WaveformMath.ClampAmplitude(value);
         }
         
         /// <summary>
-        /// Shifts the start time of the waveform by the given milliseconds.
+        /// Adjusts the waveform's timeline by shifting its start time.
         /// </summary>
-        /// <param name="milliseconds">Milliseconds to shift the start time by</param>
+        /// <param name="milliseconds">Time shift in milliseconds (positive or negative)</param>
+        /// <remarks>
+        /// Has no effect if the waveform is not running. Triggers an immediate update after shifting.
+        /// </remarks>
         public void ShiftTime(double milliseconds)
         {
-            // Check if waveform is running
             if (!IsRunning) return;
-            
-            // Shift the start time by the given milliseconds
             StartTime = StartTime.AddMilliseconds(milliseconds);
-
-            // Update the last tick time, previous tick time and current value of the waveform
             Update();
         }
         
         /// <summary>
-        /// Event raised when the waveform starts
+        /// Event triggered when the waveform begins generating values.
         /// </summary>
         public WaveformStartHandler? OnWaveformStart = delegate { };
 
         /// <summary>
-        /// Event raised when the value of the waveform changes
+        /// Event triggered whenever the waveform's output value changes.
         /// </summary>
         public WaveformValueChangedHandler? OnWaveformValueChanged = delegate { };
 
         /// <summary>
-        /// Event raised when the waveform ends
+        /// Event triggered when the waveform stops generating values.
         /// </summary>
         public WaveformEndHandler? OnWaveformEnd = delegate { };
 
         /// <summary>
-        /// Starts the waveform with the current UTC time
+        /// Starts waveform generation using the current UTC time as reference.
         /// </summary>
         public void Start() => Start(null);
 
         /// <summary>
-        /// Starts the waveform with the given UTC time
+        /// Starts waveform generation synchronized with another waveform's timeline.
         /// </summary>
-        /// <param name="waveform">Waveform to synchronize with</param>
-        /// <param name="shiftMilliseconds">Milliseconds to shift the start time by</param>
+        /// <param name="waveform">Reference waveform to synchronize with</param>
+        /// <param name="shiftMilliseconds">Optional time offset in milliseconds</param>
+        /// <remarks>
+        /// No effect if reference waveform isn't running. Applies time offset before starting.
+        /// </remarks>
         public void StartSynchronizedWith(Waveform waveform, double shiftMilliseconds = 0)
         {
-            // Check if the waveform is running
             if (!waveform.IsRunning) return;
-
-            // Get the start time of the given waveform
             DateTime startTime = waveform.StartTime;
-            
-            // Shift the start time by the given milliseconds
             startTime = startTime.AddMilliseconds(shiftMilliseconds);
-            
-            // Start the waveform with the shifted start time
             Start(startTime);
         }
         
         /// <summary>
-        /// Starts the waveform
+        /// Internal implementation of waveform start with optional specific start time.
         /// </summary>
+        /// <param name="startTime">Optional specific UTC start time</param>
         private void Start(DateTime? startTime)
         {
-            // Ensure the waveform is not already running
             if (IsRunning) return;
-
-            // Update times and set the running flag
             StartTime = startTime ?? DateTime.UtcNow;
             LastTickTime = StartTime;
             IsRunning = true;
-
-            // Raise the start event and set the default value
             OnWaveformStart?.Invoke();
             OnWaveformValueChanged?.Invoke(DefaultValue);
-
-            // Register the waveform in the API
             WaveformAPI.RegisterWaveform(this);
         }
 
         /// <summary>
-        /// Stops the waveform
+        /// Stops waveform generation and resets all timing state.
         /// </summary>
+        /// <remarks>
+        /// Triggers value reset to default and unregisters from the waveform API.
+        /// </remarks>
         public void Stop()
         {
-            // Ensure the waveform is running
             if (!IsRunning) return;
-                
-            // Reset times and the running flag
             StartTime = PreviousTickTime = LastTickTime = DateTime.MinValue;
             IsRunning = false;
-
-            // Reset value to default and raise the end event
             OnWaveformValueChanged?.Invoke(DefaultValue);
             OnWaveformEnd?.Invoke();
-
-            // Unregister the waveform from the API
             WaveformAPI.UnregisterWaveform(this);
         }
 
         /// <summary>
-        /// Updates the waveform
+        /// Internal method to update waveform state using current UTC time.
         /// </summary>
         internal void Update() => _Update(DateTime.UtcNow);
 
         /// <summary>
-        /// Updates the waveform using UTC time, used mostly for synchronization
+        /// Core update logic that advances the waveform's timeline and calculates new values.
         /// </summary>
+        /// <param name="currentDateUtc">Current UTC timestamp for synchronization</param>
         private void _Update(DateTime currentDateUtc)
         {
             if (!IsRunning) return;
-
-            // Update the last tick time, must be UTC to prevent issues with time zones
             PreviousTickTime = LastTickTime;
             LastTickTime = currentDateUtc;
-
-            // Stop the waveform if it is not infinite and the duration has passed
             if (!IsInfinite && TimeSinceStart > Duration)
             {
                 Stop();
                 return;
             }
-
-            // Update the waveform value
             OnWaveformValueChanged?.Invoke(CalculateValueAt(TimeSinceStart));
         }
     }

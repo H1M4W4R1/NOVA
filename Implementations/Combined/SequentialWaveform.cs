@@ -5,22 +5,37 @@ using NOVA.Utility;
 namespace NOVA.Implementations.Combined
 {
     /// <summary>
-    /// Represents a sequential waveform - a waveform that is composed of multiple waveforms
+    /// Represents a sequential waveform composed of multiple child waveforms played in sequence.
+    /// Implements IPeriodicWaveform to support periodic waveform properties and behaviors.
     /// </summary>
     public sealed class SequentialWaveform : Waveform, IPeriodicWaveform
     {
         /// <summary>
-        /// Waveforms that make up the sequential waveform
+        /// The array of Waveform objects that make up this sequential waveform.
+        /// These waveforms will be played in the order they appear in the array.
         /// </summary>
         private readonly Waveform[] _waveforms;
         
         /// <summary>
-        /// Duration of the waveform in milliseconds
+        /// Gets the total duration of one complete cycle of the sequential waveform in milliseconds.
+        /// This is the sum of all contained waveform durations.
         /// </summary>
         public double Period { get; init; }
 
+        /// <summary>
+        /// Gets the frequency of the waveform in Hz, calculated from the Period property.
+        /// </summary>
         public double Frequency => WaveformMath.PeriodToFrequency(Period);
 
+        /// <summary>
+        /// Calculates the waveform's value at a specific point in time.
+        /// </summary>
+        /// <param name="time">The time in milliseconds at which to calculate the value.</param>
+        /// <returns>The calculated waveform value at the specified time.</returns>
+        /// <remarks>
+        /// This method handles time wrapping for periodic waveforms and automatically
+        /// selects the appropriate child waveform based on the elapsed time.
+        /// </remarks>
         public override double CalculateValueAt(double time)
         {
             // Calculate index of waveform with specified time
@@ -43,6 +58,16 @@ namespace NOVA.Implementations.Combined
             return _waveforms[index].CalculateValueAt(timeLeft);
         }
         
+        /// <summary>
+        /// Initializes a new instance of the SequentialWaveform class.
+        /// </summary>
+        /// <param name="loopWaveform">Whether the waveform should loop indefinitely.</param>
+        /// <param name="waveforms">The waveforms to combine sequentially.</param>
+        /// <exception cref="ArgumentException">Thrown if any provided waveform is infinite.</exception>
+        /// <remarks>
+        /// The constructor calculates the total period as the sum of all child waveform durations.
+        /// Infinite waveforms are not allowed as they would make the sequential waveform's duration undefined.
+        /// </remarks>
         public SequentialWaveform(bool loopWaveform = false, params Waveform[] waveforms)
         {
             _waveforms = waveforms;
