@@ -38,6 +38,10 @@ namespace NOVA.Implementations
         ///     The time in milliseconds since waveform start (unused in this implementation).
         /// </param>
         /// <returns>The constant amplitude value set during construction.</returns>
-        public override double CalculateValueAt(double time) => amplitude;
+        public override double[] CalculateValuesAt(double time)
+        {
+            CurrentValues[0] = amplitude;
+            return CurrentValues;
+        }
     }
 }

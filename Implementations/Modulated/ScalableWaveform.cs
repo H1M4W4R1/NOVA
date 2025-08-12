@@ -57,6 +57,10 @@ namespace NOVA.Implementations.Modulated
         /// <returns>
         ///     The current amplitude value of the waveform, always in the range [0, 1].
         /// </returns>
-        public override double CalculateValueAt(double time) => Amplitude;
+        public override double[] CalculateValuesAt(double time)
+        {
+            CurrentValues[0] = Amplitude;
+            return CurrentValues;
+        }
     }
 }

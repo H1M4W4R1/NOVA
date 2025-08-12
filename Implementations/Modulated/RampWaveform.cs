@@ -62,8 +62,8 @@ namespace NOVA.Implementations.Modulated
         ///     This method is aggressively inlined for performance optimization.
         ///     Changing the start value immediately affects subsequent waveform calculations.
         /// </remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetStartValue(double value) => StartValue = WaveformMath.ClampAmplitude(value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public void SetStartValue(double value)
+            => StartValue = WaveformMath.ClampAmplitude(value);
 
         /// <summary>
         ///     Updates the ending value of the ramp waveform.
@@ -73,8 +73,8 @@ namespace NOVA.Implementations.Modulated
         ///     This method is aggressively inlined for performance optimization.
         ///     Changing the end value immediately affects subsequent waveform calculations.
         /// </remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetEndValue(double value) => EndValue = WaveformMath.ClampAmplitude(value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public void SetEndValue(double value)
+            => EndValue = WaveformMath.ClampAmplitude(value);
 
         /// <summary>
         ///     Calculates the waveform's value at a specific point in time.
@@ -89,7 +89,13 @@ namespace NOVA.Implementations.Modulated
         ///     The calculation clamps the time ratio to [0, 1] range to ensure the output
         ///     never exceeds the specified start/end values regardless of input time.
         /// </remarks>
-        public override double CalculateValueAt(double time)
-            => StartValue + (EndValue - StartValue) * Math.Clamp(time / Duration, 0, 1); // We clamp duration to [0, 1] range to prevent the value from going below 0 or above 1
+        public override double[] CalculateValuesAt(double time)
+        {
+            // We clamp duration to [0, 1] range to prevent the value from going below 0 or above 1
+            CurrentValues[0] = StartValue + (EndValue - StartValue) *
+                               Math.Clamp(time / Duration, 0, 1);
+
+            return CurrentValues;
+        }
     }
 }

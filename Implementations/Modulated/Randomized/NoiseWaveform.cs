@@ -64,7 +64,7 @@ namespace NOVA.Implementations.Modulated.Randomized
         /// </summary>
         /// <param name="time">The current time in seconds</param>
         /// <returns>A random value in [offset, offset+amplitude] range that remains constant for each update interval</returns>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Regenerate value if minimum update interval has elapsed
             if (Math.Abs(time - _lastCalculatedTime) > WaveformMath.MINIMUM_USABLE_PERIOD)
@@ -74,7 +74,8 @@ namespace NOVA.Implementations.Modulated.Randomized
                 _lastCalculatedTime = time;
             }
             
-            return _lastCalculatedValue;
+            CurrentValues[0] =  _lastCalculatedValue;
+            return CurrentValues;
         }
     }
 }

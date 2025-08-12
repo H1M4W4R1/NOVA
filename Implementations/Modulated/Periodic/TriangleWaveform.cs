@@ -40,7 +40,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///     For the rising half of the period, the value increases linearly from offset to (offset + amplitude).
         ///     For the falling half, it decreases linearly back to offset.
         /// </remarks>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Calculate period
             double period = WaveformMath.FrequencyToPeriod(Frequency);
@@ -50,9 +50,10 @@ namespace NOVA.Implementations.Modulated.Periodic
             double halfPeriod = period / 2;
 
             // If the waveform is in the second half of the period, invert the value
-            return timeInPeriod <= halfPeriod
+            CurrentValues[0] =  timeInPeriod <= halfPeriod
                 ? Amplitude * timeInPeriod / halfPeriod + Offset
                 : Amplitude * (period - timeInPeriod) / halfPeriod + Offset;
+            return CurrentValues;
         }
     }
 }

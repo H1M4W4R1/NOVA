@@ -14,6 +14,16 @@
     ///     This delegate is invoked whenever a waveform's output value changes significantly.
     ///     The exact frequency of invocation depends on the waveform implementation.
     /// </remarks>
+    public delegate void WaveformValuesChanged(Span<double> values);
+    
+    /// <summary>
+    ///     Represents a method that will handle waveform value change events.
+    /// </summary>
+    /// <param name="value">The current value of the waveform, in the range [0, 1].</param>
+    /// <remarks>
+    ///     This delegate is invoked whenever a waveform's output value changes significantly.
+    ///     The exact frequency of invocation depends on the waveform implementation.
+    /// </remarks>
     public delegate void WaveformValueChangedHandler(double value);
 
     /// <summary>

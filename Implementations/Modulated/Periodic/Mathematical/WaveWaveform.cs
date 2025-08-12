@@ -70,7 +70,7 @@ namespace NOVA.Implementations.Modulated.Periodic.Mathematical
         ///         <item>Amplitude scaling and offset application</item>
         ///     </list>
         /// </returns>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Internal sine calculation
             // Function is periodic with default period of 1 second (when frequency = 1)
@@ -81,7 +81,8 @@ namespace NOVA.Implementations.Modulated.Periodic.Mathematical
             double sineValue = Math.Sin(sinInternal);
             
             // Calculate waveform
-            return Amplitude * (1 - Math.Pow(Math.Abs(sineValue), SmoothingFactor)) + Offset;
+            CurrentValues[0] = Amplitude * (1 - Math.Pow(Math.Abs(sineValue), SmoothingFactor)) + Offset;
+            return CurrentValues;
         }
     }
 }

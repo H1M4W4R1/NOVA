@@ -102,7 +102,7 @@ namespace NOVA.Implementations.Modulated.Randomized
         ///     Updates the random amplitude at the specified frequency and returns
         ///     the sum of current amplitude and offset, clamped to [0, 1] range.
         /// </remarks>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Check if enough time has passed since the last update
             UpdateTimer += DeltaTime;
@@ -116,8 +116,9 @@ namespace NOVA.Implementations.Modulated.Randomized
             }
 
             // Return the current amplitude with the offset, ensuring the sum is within [0, 1] range
-            return Math.Clamp(CurrentAmplitude + Offset, WaveformMath.WAVEFORM_MINIMUM_VALUE,
+            CurrentValues[0] =  Math.Clamp(CurrentAmplitude + Offset, WaveformMath.WAVEFORM_MINIMUM_VALUE,
                 WaveformMath.WAVEFORM_MAXIMUM_VALUE);
+            return CurrentValues;
         }
     }
 }

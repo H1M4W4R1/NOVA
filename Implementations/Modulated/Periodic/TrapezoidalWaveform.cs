@@ -73,8 +73,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///     The value is clamped to [0, 1] range and may adjust the offset to maintain validity.
         /// </summary>
         /// <param name="amplitude">New amplitude value in [0, 1] range.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetAmplitude(double amplitude)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public void SetAmplitude(double amplitude)
         {
             Amplitude = WaveformMath.ClampAmplitude(amplitude);
             Offset = WaveformMath.ClampOffset(Offset, Amplitude);
@@ -85,8 +84,8 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///     The value is clamped to ensure amplitude + offset ≤ 1.
         /// </summary>
         /// <param name="offset">New offset value in [0, 1] range.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetOffset(double offset) => Offset = WaveformMath.ClampOffset(offset, Amplitude);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public void SetOffset(double offset)
+            => Offset = WaveformMath.ClampOffset(offset, Amplitude);
 
         /// <summary>
         ///     Calculates the waveform's value at a specific point in time.
@@ -99,19 +98,23 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///     2. Determines which phase (ramp up, hold max, ramp down, hold min) the time falls into
         ///     3. Computes the appropriate interpolated value for that phase
         /// </remarks>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Calculate time in period
             double timeInPeriod = WaveformMath.TimeInCycle(time, Period);
 
             // Calculate value based on time in period
             if (timeInPeriod < rampUpTime) // Ramp-up, triangle
-                return Offset + Amplitude * (timeInPeriod / rampUpTime);
-            if (timeInPeriod < rampUpTime + keepMaxTime) // Keep max, constant value
-                return Offset + Amplitude;
-            if (timeInPeriod < rampUpTime + keepMaxTime + rampDownTime) // Ramp-down, inverted triangle
-                return Offset + Amplitude * (WaveformMath.WAVEFORM_MAXIMUM_VALUE - (timeInPeriod - rampUpTime - keepMaxTime) / rampDownTime);
-            return Offset; // Keep min, constant value
+                CurrentValues[0] = Offset + Amplitude * (timeInPeriod / rampUpTime);
+            else if (timeInPeriod < rampUpTime + keepMaxTime) // Keep max, constant value
+                CurrentValues[0] = Offset + Amplitude;
+            else if (timeInPeriod < rampUpTime + keepMaxTime + rampDownTime) // Ramp-down, inverted triangle
+                CurrentValues[0] = Offset + Amplitude * (WaveformMath.WAVEFORM_MAXIMUM_VALUE -
+                                                         (timeInPeriod - rampUpTime - keepMaxTime) / rampDownTime);
+            else
+                CurrentValues[0] = Offset; // Keep min, constant value
+
+            return CurrentValues;
         }
     }
 }

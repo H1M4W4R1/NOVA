@@ -36,7 +36,7 @@ namespace NOVA.Implementations.Combined
         ///     This method handles time wrapping for periodic waveforms and automatically
         ///     selects the appropriate child waveform based on the elapsed time.
         /// </remarks>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Calculate index of waveform with specified time
             int index = 0;
@@ -55,7 +55,7 @@ namespace NOVA.Implementations.Combined
             }
             
             // Calculate value of the waveform
-            return _waveforms[index].CalculateValueAt(timeLeft);
+            return _waveforms[index].CalculateValuesAt(timeLeft);
         }
 
         /// <summary>

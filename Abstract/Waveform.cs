@@ -8,8 +8,10 @@ namespace NOVA.Abstract
     ///     Abstract base class that defines the core functionality for all waveform implementations.
     ///     Provides timing control, state management, and event handling for waveform generation.
     /// </summary>
-    public abstract class Waveform
+    public abstract class Waveform(int nParameters = 1)
     {
+        protected double[] CurrentValues { get; } = new double[nParameters];
+
         /// <summary>
         ///     Gets the UTC timestamp when the waveform was started. Protected for derived class access.
         /// </summary>
@@ -51,7 +53,7 @@ namespace NOVA.Abstract
         /// <remarks>
         ///     Implementations must support looping behavior when the waveform duration is exceeded.
         /// </remarks>
-        public abstract double CalculateValueAt(double time);
+        public abstract double[] CalculateValuesAt(double time);
 
         /// <summary>
         ///     Gets or sets the total duration of the waveform in milliseconds.
@@ -76,7 +78,7 @@ namespace NOVA.Abstract
         ///     The value is automatically clamped to the range [0, 1]. Can be changed
         ///     dynamically during runtime to meet specific application requirements.
         /// </remarks>
-        public double DefaultValue { get; protected set; }
+        public double[] DefaultValues = new double[nParameters];
 
         /// <summary>
         ///     Updates the waveform's duration if supported by the implementation.
@@ -91,7 +93,7 @@ namespace NOVA.Abstract
         {
             if (this is IStaticDurationWaveform)
             {
-                if(!silentException)
+                if (!silentException)
                     throw new InvalidOperationException("This waveform does not support dynamic duration.");
                 return;
             }
@@ -102,11 +104,15 @@ namespace NOVA.Abstract
         /// <summary>
         ///     Sets the default output value for the waveform, clamped to valid range.
         /// </summary>
-        /// <param name="value">New default value in range [0, 1]</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetDefaultValue(double value)
+        /// <param name="values">Array of new default value in range [0, 1]</param>
+        /// <exception cref="ArgumentException">Invalid amount of values provided.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public void SetDefaultValues(Span<double> values)
         {
-            DefaultValue = WaveformMath.ClampAmplitude(value);
+            if (values.Length != nParameters)
+                throw new ArgumentException("The waveform default values must have the same length as the number of parameters.");
+
+            for (int n = 0; n < DefaultValues.Length; n++) 
+                DefaultValues[n] = WaveformMath.ClampAmplitude(values[n]);
         }
 
         /// <summary>
@@ -127,6 +133,11 @@ namespace NOVA.Abstract
         ///     Event triggered when the waveform begins generating values.
         /// </summary>
         public WaveformStartHandler? OnWaveformStart = delegate { };
+
+        /// <summary>
+        ///     Event triggered whenever the waveform's output value changes.
+        /// </summary>
+        public WaveformValuesChanged? OnWaveformValuesChanged = delegate { };
 
         /// <summary>
         ///     Event triggered whenever the waveform's output value changes.
@@ -170,7 +181,9 @@ namespace NOVA.Abstract
             LastTickTime = StartTime;
             IsRunning = true;
             OnWaveformStart?.Invoke();
-            OnWaveformValueChanged?.Invoke(DefaultValue);
+            OnWaveformValuesChanged?.Invoke(DefaultValues);
+            if(DefaultValues.Length > 0)
+                OnWaveformValueChanged?.Invoke(DefaultValues[0]);
             WaveformAPI.RegisterWaveform(this);
         }
 
@@ -185,7 +198,9 @@ namespace NOVA.Abstract
             if (!IsRunning) return;
             StartTime = PreviousTickTime = LastTickTime = DateTime.MinValue;
             IsRunning = false;
-            OnWaveformValueChanged?.Invoke(DefaultValue);
+            OnWaveformValuesChanged?.Invoke(DefaultValues);
+            if(DefaultValues.Length > 0)
+                OnWaveformValueChanged?.Invoke(DefaultValues[0]);
             OnWaveformEnd?.Invoke();
             WaveformAPI.UnregisterWaveform(this);
         }
@@ -209,7 +224,11 @@ namespace NOVA.Abstract
                 Stop();
                 return;
             }
-            OnWaveformValueChanged?.Invoke(CalculateValueAt(TimeSinceStart));
+
+            // Invoke value changed event
+            Span<double> values = CalculateValuesAt(TimeSinceStart);
+            OnWaveformValuesChanged?.Invoke(values);
+            if (values.Length > 0) OnWaveformValueChanged?.Invoke(values[0]);
         }
     }
 }

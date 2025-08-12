@@ -64,7 +64,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///     2. Calculates the current position within the waveform's period
         ///     3. Returns high value if within fill factor portion, low value otherwise
         /// </remarks>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Calculate period
             double period = WaveformMath.FrequencyToPeriod(Frequency);
@@ -73,9 +73,14 @@ namespace NOVA.Implementations.Modulated.Periodic
             double timeInPeriod = WaveformMath.TimeInCycle(time, period);
 
             // If the waveform is in the second half of the period, invert the value
-            if (timeInPeriod <= period * FillFactor) return Amplitude + Offset;
+            if (timeInPeriod <= period * FillFactor)
+            {
+                CurrentValues[0] = Amplitude + Offset;
+                return CurrentValues;
+            }
 
-            return Offset;
+            CurrentValues[0] = Offset;
+            return CurrentValues;
         }
     }
 }

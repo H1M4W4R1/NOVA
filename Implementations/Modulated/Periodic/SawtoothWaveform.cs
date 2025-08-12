@@ -72,7 +72,7 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///     4. Applies inversion if specified
         ///     5. Adds the DC offset
         /// </remarks>
-        public override double CalculateValueAt(double time)
+        public override double[] CalculateValuesAt(double time)
         {
             // Calculate period
             double period = WaveformMath.FrequencyToPeriod(Frequency);
@@ -84,7 +84,8 @@ namespace NOVA.Implementations.Modulated.Periodic
             double rampUpValue = Amplitude * timeInPeriod / period;
 
             // If the waveform is inverted, invert the ramp-up value and return otherwise return the ramp-up value
-            return (Inverted ? Amplitude - rampUpValue : rampUpValue) + Offset;
+            CurrentValues[0] = (Inverted ? Amplitude - rampUpValue : rampUpValue) + Offset;
+            return CurrentValues;
         }
     }
 }

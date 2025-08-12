@@ -40,7 +40,10 @@ namespace NOVA.Implementations.Modulated.Periodic.Mathematical
         ///     where f is frequency, A is amplitude, O is offset, and t is time in milliseconds.
         ///     The -π/2 phase shift ensures the waveform starts at its minimum value.
         /// </remarks>
-        public override double CalculateValueAt(double time)
-            => (Math.Sin(-Math.PI/2 + 2 * Math.PI * Frequency * time / 1000) * Amplitude + Amplitude) / 2 + Offset;
+        public override double[] CalculateValuesAt(double time)
+        {
+            CurrentValues[0] = (Math.Sin(-Math.PI / 2 + 2 * Math.PI * Frequency * time / 1000) * Amplitude + Amplitude) / 2 + Offset;
+            return CurrentValues;
+        }
     }
 }
