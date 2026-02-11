@@ -53,8 +53,8 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///         </item>
         ///     </list>
         /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetInverted(bool inverted) => Inverted = inverted;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public void SetInverted(bool inverted)
+            => Inverted = inverted;
 
         /// <summary>
         ///     Calculates the waveform's value at a specific point in time.
@@ -64,27 +64,12 @@ namespace NOVA.Implementations.Modulated.Periodic
         ///     The waveform's amplitude value at the specified time, in the range [offset, offset + amplitude].
         ///     The exact value depends on the waveform's phase within its current period and its inversion state.
         /// </returns>
-        /// <remarks>
-        ///     The calculation follows these steps:
-        ///     1. Converts frequency to period
-        ///     2. Determines the phase within the current period
-        ///     3. Calculates a linear ramp value based on the phase
-        ///     4. Applies inversion if specified
-        ///     5. Adds the DC offset
-        /// </remarks>
         public override double[] CalculateValuesAt(double time)
         {
-            // Calculate period
-            double period = WaveformMath.FrequencyToPeriod(Frequency);
-
-            // Calculate time in period
-            double timeInPeriod = WaveformMath.TimeInCycle(time, period);
-
-            // Calculate ramp-up value
-            double rampUpValue = Amplitude * timeInPeriod / period;
+            double value = 2 * (Frequency * time - Math.Floor(Frequency * time + 0.5));
 
             // If the waveform is inverted, invert the ramp-up value and return otherwise return the ramp-up value
-            CurrentValues[0] = (Inverted ? Amplitude - rampUpValue : rampUpValue) + Offset;
+            CurrentValues[0] = (Inverted ? Amplitude - value : value) + Offset;
             return CurrentValues;
         }
     }
